@@ -1,14 +1,14 @@
-import dotenv from 'dotenv';
-dotenv.config();
+// import dotenv from 'dotenv';
+// dotenv.config();
 
 import express, { Request, Response } from 'express';
-import cors from 'cors';
+// import cors from 'cors';
 import TaskController from './tasksModule/task.controller';
 import TaskService from './tasksModule/task.service';
 import { DbManager } from './dbManager';
 
 const app = express();
-app.use(cors());
+// app.use(cors());
 app.use(express.json());
 
 const port = process.env.PORT || 3000;
