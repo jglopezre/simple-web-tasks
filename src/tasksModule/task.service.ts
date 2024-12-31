@@ -1,32 +1,73 @@
 import { DbManager } from "@/dbManager";
-import { ITask, ReducedItask } from "@/types";
+import { ReducedItask } from "@/types";
 
 class TaskService {
   constructor (private dbManager: DbManager) {};
 
-  findTasks = () => {
-    const tasks = "Lista de Tareas"
-    return tasks;
+  async findTasks() {
+    try {
+      const tasks = await this.dbManager.getCollection();
+
+      if(tasks.length === 0) throw new Error("No hay tareas registradas");
+
+      return tasks;
+
+    } catch (error) {
+      throw error;
+    }
   };
   
-  findOneTask = (id: string) => {
-    const task = `Tarea numero ${id}`;
-    return task;
+  async findOneTask(id: string) {
+    try {
+      const task = await this.dbManager.getOneRegister(id);
+
+      if (!task) throw new Error ('La tarea no existe en la base de datos');
+      
+      return task;
+
+    } catch (error) {
+      throw error;
+    }
   };
   
-  createTask = async(data: ReducedItask) => {
-    this.dbManager.setDocument(data);
-    return await this.dbManager.save()
+  async createTask(data: ReducedItask) {
+    try {
+      this.dbManager.setDocument(data);
+      const task = await this.dbManager.save()
+
+      if (!task) throw new Error('La tarea no se pudo crear');
+
+      return task;
+
+    } catch (error) {
+      throw error;
+    }
   };
   
-  deleteTask = (id: string) => {
-    const task = `Tarea numero ${id} eliminada`;
-    return task;
+  async deleteTask(id: string) {
+    try {
+      const task = this.dbManager.deleteRegister(id);
+
+      if (!task) throw new Error('La tarea no existe en la base de datos'); 
+      
+      return task;
+
+    } catch (error) {
+      throw error;
+    }
   };
   
-  updateTask = (id: string, data: any) => {
-    const task = `Tarea numero ${id} actualizada con la data ${data}`;
-    return task;
+  async updateTask (id: string, data: any) {
+    try {
+      const task = await this.dbManager.updateRegister(id, data);
+
+      if (!task) throw new Error('La tarea no existe en la base de datos')
+      return task;
+
+    } catch (error) {
+      throw error;
+    }
+
   };
 }
 
