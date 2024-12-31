@@ -4,7 +4,7 @@ import { ITask } from "@/types";
 const TaskSchema: Schema = new Schema({
     title: { type: String, required: true},
     description: { type: String },
-    status: { type: Boolean, default: false },
+    completed: { type: Boolean, default: false },
     creationDate: { type: Date, default: Date.now }
 });
 
