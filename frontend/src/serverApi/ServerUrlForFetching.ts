@@ -24,14 +24,14 @@ export class ServerUrlForFetching {
     this.routePrefix = '/api';
 
     // For deployment on backend server
-    /* this.protocol = 'https';
+    this.protocol = 'https';
     this.port = '443';
-    this.domain = 'ferlesqlite.onrender.com'; */
+    this.domain = 'simple-web-tasks.onrender.com';
 
     // For development in a local machine
-    this.protocol = 'http';
+    /* this.protocol = 'http';
     this.port = '3001';
-    this.domain = 'localhost';
+    this.domain = 'localhost'; */
   }
 
   get fetchingUrl() {
