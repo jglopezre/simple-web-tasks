@@ -1,6 +1,6 @@
 import { createRoot } from 'react-dom/client'
 import { Provider } from './components/ui/provider.tsx'
-import { ErrorAdviceContextProvider } from './contexts/ErrorAdviceContext.tsx'
+import { ErrorAdviceContextProvider, AddTaskFormDisclosureContextProvider } from '@/contexts'
 import { QueryClient, QueryClientProvider } from '@tanstack/react-query'
 import App from './App.tsx'
 
@@ -16,7 +16,9 @@ createRoot(document.getElementById('root')!).render(
   <Provider>
     <QueryClientProvider client={queryClient}>
       <ErrorAdviceContextProvider>
-        <App />
+        <AddTaskFormDisclosureContextProvider>
+          <App />
+        </AddTaskFormDisclosureContextProvider>
       </ErrorAdviceContextProvider>
     </QueryClientProvider>
   </Provider>

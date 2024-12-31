@@ -1,6 +1,6 @@
-import { useMutation } from "@tanstack/react-query";
-import { useErrorAdviceContext } from "./useErrorAdviceContext"
-import { getTask } from "@/serverApi/taskApi";
+import { useMutation } from '@tanstack/react-query';
+import { useErrorAdviceContext } from './useErrorAdviceContext';
+import { getTask } from '@/serverApi/taskApi';
 
 export const useGetTask = () => {
   const { setError } = useErrorAdviceContext();

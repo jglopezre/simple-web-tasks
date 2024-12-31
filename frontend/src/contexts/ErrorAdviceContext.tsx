@@ -1,5 +1,5 @@
-import { ErrorActionsT, SimpleReactComponent } from "@/types";
-import { createContext, FC, useMemo, useState } from "react";
+import { createContext, FC, useMemo, useState } from 'react';
+import { ErrorActionsT, SimpleReactComponent } from '@/types';
 
 export const ErrorAdviceContext = createContext<ErrorActionsT | null>(null);
 

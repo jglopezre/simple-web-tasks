@@ -1,6 +1,6 @@
-import { getTasks } from "@/serverApi/taskApi";
-import { useQuery } from "@tanstack/react-query"
-import { useErrorAdviceContext } from "./useErrorAdviceContext";
+import { getTasks } from '@/serverApi/taskApi';
+import { useQuery } from '@tanstack/react-query'
+import { useErrorAdviceContext } from './useErrorAdviceContext';
 
 export const useGetTasks = () => {
   const { setError } = useErrorAdviceContext();

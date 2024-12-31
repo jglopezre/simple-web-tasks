@@ -1,6 +1,10 @@
 import axios, { AxiosResponse } from "axios";
 import { ServerUrlForFetching } from "./ServerUrlForFetching";
-import { PartialRequestTaskObjectT, RequestTaskObjectT, ResponseTaskObjectT, TasksCollectionT } from "@/types";
+import {
+  PartialRequestTaskObjectT,
+  ResponseTaskObjectT,
+  TasksCollectionT
+} from "@/types";
 
 const serverUrl = new ServerUrlForFetching('/tasks');
 
@@ -18,8 +22,8 @@ export const getTask = async ({ id }:{ id: string }) => {
   return res.data;
 }
 
-export const createTask = async ({ data } : {data: RequestTaskObjectT}) => {
-  const res = await tasksApi.post<RequestTaskObjectT, AxiosResponse<ResponseTaskObjectT>>(
+export const createTask = async ({ data } : {data: PartialRequestTaskObjectT}) => {
+  const res = await tasksApi.post<PartialRequestTaskObjectT, AxiosResponse<ResponseTaskObjectT>>(
     serverUrl.route,
     data,
   );

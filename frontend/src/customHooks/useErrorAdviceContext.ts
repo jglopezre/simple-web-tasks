@@ -1,5 +1,5 @@
-import { ErrorAdviceContext } from "@/contexts/ErrorAdviceContext"
-import { useContext } from "react"
+import { useContext } from 'react';
+import { ErrorAdviceContext } from '@/contexts/ErrorAdviceContext';
 
 export const useErrorAdviceContext = () => {
   const context = useContext(ErrorAdviceContext);
