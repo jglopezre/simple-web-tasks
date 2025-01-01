@@ -22,6 +22,6 @@
 */*.njsproj
 */*.sln
 */*.sw?
-*/.env
-
+backend/.env
+backend/.env.*
 */.vite

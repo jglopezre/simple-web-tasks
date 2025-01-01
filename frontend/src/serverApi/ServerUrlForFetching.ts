@@ -1,15 +1,13 @@
 import { UrlAdresses } from '@/types';
-
-type Protocol = 'http' | 'https';
-type Port = '3001' | '443';
+import config from '@/config';
 
 
 export class ServerUrlForFetching {
-  private readonly protocol: Protocol;
+  private readonly protocol: string;
   
   private readonly domain: string;
  
-  private readonly port: Port;
+  private readonly port: string;
   
   private readonly routePrefix: string;
 
@@ -24,10 +22,18 @@ export class ServerUrlForFetching {
     this.port = '443';
     this.domain = 'simple-web-tasks.onrender.com'; */
 
-    // For development in a local machine
+    /* // For development in a local machine
     this.protocol = 'http';
     this.port = '3001';
-    this.domain = 'localhost';
+    this.domain = 'localhost'; */
+
+    this.protocol = config.protocol;
+    this.port = config.port;
+    this.domain = config.apiUrl;
+
+    console.log(this.protocol);
+    console.log(this.port);
+    console.log(this.domain);
   }
 
   get fetchingUrl() {

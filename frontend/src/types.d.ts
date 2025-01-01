@@ -31,3 +31,10 @@ export type AddTaskFormDisclosureT = {
   openAddTaskForm: () => void,
   closeAddTaskForm: () => void,
 };
+
+export type Config = {
+  apiUrl: string;
+  port: string;
+  isProduction: boolean;
+  protocol: 'http' | 'https';
+}
