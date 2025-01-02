@@ -59,6 +59,10 @@ cd backend && npm run build
 ```
 Una vez compilado, solo deberas cargar el contenido de la carpeta `backend/dist` en una instancia de node, se debe configurar las variables de entorno como en el archivo `.env`. 
 
+### Documentación Swagger
+
+Para acceder a la documentación de la API, se debe ingresar a la ruta `/api/doc`.
+
 ## Stack Utilizado
 
 ### Backend
