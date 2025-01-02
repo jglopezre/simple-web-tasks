@@ -37,7 +37,7 @@ export class DbManager {
   }
   
   async save() {
-    if (!this.documentData) throw new Error("DocumentData must have been setted before saving");
+    if (!this.documentData) throw new Error("DocumentData debe estar seteada antes de salvar");
     const taskToSave = new TaskModel(this.documentData);
     const taskSaved = await taskToSave.save();
     return taskSaved;
