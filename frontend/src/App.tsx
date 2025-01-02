@@ -1,15 +1,13 @@
-import { Flex, For, Stack, Text } from "@chakra-ui/react";
-import { useGetTasks } from "./customHooks";
-import { TaskCard } from "./components/ui/task-card";
-import { Layout } from "./components/Layout";
-import { useAddTaskFormDisclosureContext } from "./customHooks/useAddTaskFormDisclosureContext";
-import { AddTaskFormDialog } from "./components/AddTaskFormDialog";
-import { AddTaskButton } from "./components/ui/add-task-button";
+import { Flex, For, Skeleton, Stack, Text } from "@chakra-ui/react";
+import { useGetTasks } from "@/customHooks";
+import { TaskCard } from "@/components/ui/task-card";
+import { Layout } from "@/components/Layout";
+import { AddTaskFormDialog } from "@/components/AddTaskFormDialog";
+import { AddTaskButton } from "@/components/ui/add-task-button";
+import { emptyTaskArrayGenerator } from "@/helpers";
 
 function App() {
-  const { data } = useGetTasks();
-  const { isOpenAddTaskForm } = useAddTaskFormDisclosureContext();
-  console.log('Is open addtask form: ', isOpenAddTaskForm());
+  const { data: responseData, isLoading } = useGetTasks();
   
   return (
     <>
@@ -20,17 +18,26 @@ function App() {
             <Text textStyle="4xl">Panel de Tareas</Text>
             <AddTaskButton />
           </Flex>
-          <Flex wrap="wrap" gap="8" >
-            <For each={data}>
+          <Flex 
+            wrap={{ base: 'nowrap', md: 'wrap' }}
+            direction={{ base: 'column', md: 'row'}}
+            gap="4"
+          >
+            <For each={responseData?.data ?? emptyTaskArrayGenerator()}>
               {(item) => (
-                <TaskCard
-                  key={item._id}
-                  _id={item._id}
-                  title={item.title}
-                  description={item.description}
-                  creationDate={item.creationDate}
-                  completed={item.completed}
-                />
+                <Skeleton loading={isLoading}
+                  flex="1 1 calc(35% - 16px)"
+                  minWidth="300px"
+                >
+                  <TaskCard
+                    key={item._id}
+                    _id={item._id}
+                    title={item.title}
+                    description={item.description}
+                    creationDate={item.creationDate}
+                    completed={item.completed}
+                  />
+                </Skeleton>
               )}
             </For>
           </Flex>

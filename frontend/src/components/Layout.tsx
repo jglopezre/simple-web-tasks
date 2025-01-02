@@ -7,7 +7,7 @@ export const Layout: FC<SimpleReactComponent> = ({ children }) => {
   return (
     <Box position="relative" width="auto" minHeight="vh">
       <Box
-        width={{ base: '96', md: '2/3'}}
+        width={{ base: '90', md: '2/3'}}
         mx="auto"
         px={4}
         py={8}

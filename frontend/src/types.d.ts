@@ -38,3 +38,8 @@ export type Config = {
   isProduction: boolean;
   protocol: 'http' | 'https';
 }
+
+export type ApiReturningDataT<T> = {
+  status?: number,
+  data?: T
+};

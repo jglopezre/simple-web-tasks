@@ -24,7 +24,7 @@ export const TaskCard: FC<TaskCardPropsT> = (props) => {
   }
 
   return (
-    <Card.Root minWidth="350px">
+    <Card.Root>
       <Card.Header>
         <Flex direction="row" gap="8">
           <Status value={!completed ? "error" : "success"}>
@@ -48,5 +48,6 @@ export const TaskCard: FC<TaskCardPropsT> = (props) => {
         </Button>
       </Card.Footer>
     </Card.Root>
+
   );
 }

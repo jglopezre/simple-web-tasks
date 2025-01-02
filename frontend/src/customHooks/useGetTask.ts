@@ -9,7 +9,7 @@ export const useGetTask = () => {
     mutationKey: ['task'],
     mutationFn: getTask,
     onError: setError,
-  })
+  });
 
   return result;
 }
