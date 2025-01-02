@@ -1,0 +1,249 @@
+{
+  "openapi": "3.0.0",
+  "info": {
+    "title": "API de Tareas",
+    "version": "1.0.0",
+    "description": "Documentación de la API para gestionar tareas"
+  },
+  "servers": [
+    {
+      "url": "http://localhost:3001"
+    }
+  ],
+  "paths": {
+    "/tasks": {
+      "get": {
+        "summary": "Obtener todas las tareas",
+        "description": "Devuelve una lista de todas las tareas registradas",
+        "responses": {
+          "200": {
+            "description": "Lista de tareas obtenida con éxito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "404": {
+            "description": "No hay tareas registradas",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "type": "object",
+                  "properties": {
+                    "message": {
+                      "type": "string",
+                      "example": "No hay tareas registradas"
+                    }
+                  }
+                }
+              }
+            }
+          },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "post": {
+        "sumary": "Crear una nueva tarea",
+        "description": "Crea una nueva tarea en la base de datos",
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": {
+                "$ref": "#/components/schemas/Task",
+                "required": ["title", "description"]
+              }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessfullOperation",
+            "description": "Tarea guardada con exito"
+          },
+          "400": { "$ref": "#/components/responses/ValidationError" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    },
+    "/tasks/{id}": {
+      "get": {
+        "summary": "Obtener una tarea",
+        "description": "Devuelve la tarea indicada en el parametro id de la URL",
+        "parameters": [
+          { "$ref": "#/components/parameters/id"}
+        ],
+        "responses": {
+          "200": {
+            "description": "Tarea obtenida con éxito",
+            "content": {
+              "application/json": {
+                "schema": {
+                  "$ref": "#/components/schemas/Task"
+                }
+              }
+            }
+          },
+          "404": { "$ref": "#/components/responses/NotFoundError" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "put": {
+        "sumary": "Actualizar una tarea",
+        "description": "Actualiza la tarea indicada en el parametro id de la URL",
+        "parameters": [
+          { "$ref": "#/components/parameters/id"}
+        ],
+        "requestBody": {
+          "required": true,
+          "content": {
+            "application/json": {
+              "schema": { "$ref": "#/components/schemas/Task" }
+            }
+          }
+        },
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessfullOperation",
+            "description": "Tarea actualizada con exito"
+          },
+          "400": { "$ref": "#/components/responses/ValidationError" },
+          "404": { "$ref": "#/components/responses/NotFoundError"},
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      },
+      "delete": {
+        "summary": "Eliminar una tarea",
+        "description": "Elimina una tarea indicada en el parametro id de la URL",
+        "parameters": [
+          { "$ref": "#/components/parameters/id"}
+        ],
+        "responses": {
+          "200": {
+            "$ref": "#/components/responses/SuccessfullOperation",
+            "description": "Tarea eliminada con éxito"
+          },
+          "404": { "$ref": "#/components/responses/NotFoundError" },
+          "500": { "$ref": "#/components/responses/InternalServerError" }
+        }
+      }
+    }
+  },
+  "components": {
+    "parameters": {
+      "id": {
+        "name": "id",
+        "in": "path",
+        "required": true,
+        "description": "ID de la tarea",
+        "schema": {
+          "type": "string"
+        }
+      }
+    },
+    "schemas": {
+      "Task": {
+        "type": "object",
+        "properties": {
+          "title": { "type": "string" },
+          "description": { "type": "string" },
+          "completed": {
+            "type": "boolean"
+          }
+        }
+      },
+      "DbResponse": {
+        "allOf": [
+          { "$ref": "#/components/schemas/Task" },  
+          {
+            "type": "object",
+            "properties": {
+              "_id": { "type": "string" },
+              "creationDate": {
+                "type": "string",
+                "format": "date-time"
+              }
+            }
+          }
+        ]
+      },
+      "Error": {
+        "type": "object",
+        "description": "Erro devuelto por no pasar una validación",
+        "properties": {
+          "type": { "type": "string" },
+          "value": { "type":"string" },
+          "msg": { "type":"string" },
+          "path": { "type":"string" },
+          "location": { "type":"string" }
+        },
+        "required": ["type", "msg", "path", "location"]
+      }
+    },
+    "responses": {
+      "InternalServerError": {
+        "description": "Error Interno del servidor",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "Error Interno del servidor"
+                }
+              }
+            }
+          }
+        }
+      },
+      "NotFoundError": {
+        "description": "La tarea no existe en la base de datos",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "object",
+              "properties": {
+                "message": {
+                  "type": "string",
+                  "example": "La tarea no existe en la base de datos"
+                }
+              }
+            }
+          }
+        }
+      },
+      "ValidationError": {
+        "description": "Error de validacion en el requerimiento",
+        "content": {
+          "application/json": {
+            "schema": {
+              "type": "array",
+              "items": { "$ref": "#/components/schemas/Error" }
+            }
+          }
+        }
+      },
+      "SuccessfullOperation": {
+        "content": {
+          "application/json": {
+            "schema": {
+              "type":"object",
+              "properties": {
+                "message": {
+                  "type": "string"
+                },
+                "result": {
+                  "$ref": "#/components/schemas/DbResponse" 
+                }
+              }
+            }
+          }
+        }
+      }
+    }
+  }
+}

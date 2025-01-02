@@ -64,7 +64,7 @@ class TaskController {
 
       try {
         const result = await this.taskService.createTask(data);
-        res.status(201).json({
+        res.status(200).json({
           message: 'Tarea guardada con exito',
           result,
         });
@@ -92,7 +92,7 @@ class TaskController {
       const data: ReducedItask = req.body;
       try {
         const result = await this.taskService.updateTask(id, data);
-        res.status(201).json({
+        res.status(200).json({
           message: 'Tarea Actualizada con exito',
           result,
         });
