@@ -1,6 +1,9 @@
+import express, { Request, Response, Router } from 'express';
 import TaskService from '@/tasksModule/task.service';
 import { ReducedItask } from '@/types';
-import express, { Request, Response, Router } from 'express';
+import { taskHasAtLeastOneField, taskIdValidation, taskPostValidations, taskRejectExtraFields, taskUpdateValidation } from './task.validators';
+import { validationResult } from 'express-validator';
+
 
 class TaskController {
   private taskRouter: Router;
@@ -27,7 +30,7 @@ class TaskController {
       }
     });
     
-    this.taskRouter.get('/:id', async(req: Request, res: Response) => {
+    this.taskRouter.get('/:id', taskIdValidation, async(req: Request, res: Response) => {
       const id = req.params.id;
       try {
         const result = await this.taskService.findOneTask(id);
@@ -45,8 +48,20 @@ class TaskController {
       }
     });
     
-    this.taskRouter.post('/', async(req: Request, res: Response) => {
+    this.taskRouter.post(
+      '/',
+      taskPostValidations.concat(taskRejectExtraFields), 
+      async(req: Request, res: Response
+    ) => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res.status(400).json({ errors: errors.array() });
+        return
+      }
+
       const data: ReducedItask = req.body;
+
       try {
         const result = await this.taskService.createTask(data);
         res.status(201).json({
@@ -61,7 +76,18 @@ class TaskController {
       }
     });
     
-    this.taskRouter.put('/:id', async (req: Request, res: Response) => {
+    this.taskRouter.put(
+      '/:id',
+      taskUpdateValidation.concat(taskIdValidation, taskRejectExtraFields, taskHasAtLeastOneField),
+      async (req: Request, res: Response  
+    ) => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res.status(400).json({ errors: errors.array() });
+        return
+      }
+
       const id = req.params.id;
       const data: ReducedItask = req.body;
       try {
@@ -82,7 +108,14 @@ class TaskController {
       }
     });
     
-    this.taskRouter.delete('/:id', async (req: Request, res: Response) => {
+    this.taskRouter.delete('/:id', taskIdValidation, async (req: Request, res: Response) => {
+      const errors = validationResult(req);
+
+      if (!errors.isEmpty()) {
+        res.status(400).json({ errors: errors.array() });
+        return
+      }
+
       const id = req.params.id;
       try {
         const result = await this.taskService.deleteTask(id);
