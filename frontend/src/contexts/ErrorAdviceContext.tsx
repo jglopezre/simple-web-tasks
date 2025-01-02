@@ -1,23 +1,39 @@
-import { createContext, FC, useMemo, useState } from 'react';
-import { ErrorActionsT, SimpleReactComponent } from '@/types';
+import { createContext, FC, useMemo, useReducer } from 'react';
+import { AxiosError } from 'axios';
+import errorStateReducer from '@/components/reducers/errorStateReducer';
+import {
+  ErrorActionsT,
+  SimpleReactComponent
+} from '@/types';
 
 export const ErrorAdviceContext = createContext<ErrorActionsT | null>(null);
 
 export const ErrorAdviceContextProvider: FC<SimpleReactComponent> = ({ children }) => {
-  const [isOpen, setIsOpen] = useState(false);
+  const [errorState, dispatchErrorState] = useReducer(errorStateReducer, {})
 
-  const getIsError = () => isOpen;
+  const getErrorState = () => errorState;
 
-  const setError = () => setIsOpen(true);
+  const setError = (error: AxiosError) => {
+    console.log(error.status);
+    dispatchErrorState({
+      type: 'ERROR_STATE-open-error',
+      payload: {
+        status: error.status ?? 0,
+      }
+    });
+  };
 
-  const unsetError = () => setIsOpen(false);
+  const unsetError = () => {
+    dispatchErrorState({ type: 'ERROR_STATE-close-error' });
+  };
 
   const errorActions = useMemo<ErrorActionsT>(() => ({
-    getIsError,
+    getErrorState,
     setError,
     unsetError,
-  }), [isOpen]);
+  }), [errorState]);
 
+  console.log(errorState);
   return (
     <ErrorAdviceContext.Provider value={errorActions}>
       {children}

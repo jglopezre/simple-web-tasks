@@ -1,5 +1,5 @@
-import { UrlAdresses } from '@/types';
 import config from '@/config';
+import { UrlAdresses } from '@/types';
 
 export class ServerUrlForFetching {
   private readonly protocol: string;

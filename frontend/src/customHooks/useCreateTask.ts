@@ -2,6 +2,7 @@ import { useMutation, useQueryClient } from '@tanstack/react-query';
 import { createTask } from '@/serverApi/taskApi';
 import { useErrorAdviceContext } from './useErrorAdviceContext';
 import { useAddTaskFormDisclosureContext } from './useAddTaskFormDisclosureContext';
+import { AxiosError } from 'axios';
 
 export const useCreateTask = () => {
   const { setError } = useErrorAdviceContext();
@@ -12,7 +13,7 @@ export const useCreateTask = () => {
   const result = useMutation({
     mutationKey: ['create-task'],
     mutationFn: createTask,
-    onError: setError,
+    onError: (error) => setError(error as AxiosError),
     onSuccess: async() => {
       await queryClient.invalidateQueries({ queryKey: ['tasks'] });
       closeAddTaskForm();

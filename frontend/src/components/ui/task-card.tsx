@@ -26,7 +26,7 @@ export const TaskCard: FC<TaskCardPropsT> = (props) => {
   return (
     <Card.Root>
       <Card.Header>
-        <Flex direction="row" gap="8">
+        <Flex direction="row" gap="4" justifyContent="space-between" >
           <Status value={!completed ? "error" : "success"}>
             { !completed ? "Pendiente" : "Completada" }
           </Status>

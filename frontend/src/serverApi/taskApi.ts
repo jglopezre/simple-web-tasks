@@ -1,14 +1,11 @@
-import axios, { AxiosResponse } from "axios";
-import { ServerUrlForFetching } from "./ServerUrlForFetching";
+import axios, { AxiosResponse } from 'axios';
+import { ServerUrlForFetching } from './ServerUrlForFetching';
 import {
   ApiReturningDataT,
   PartialRequestTaskObjectT,
   ResponseTaskObjectT,
   TasksCollectionT
-} from "@/types";
-
-
-
+} from '@/types';
 
 const serverUrl = new ServerUrlForFetching('/tasks');
 
@@ -20,7 +17,7 @@ export const getTasks = async () => {
   const res = await tasksApi.get<TasksCollectionT>(serverUrl.route);
   return {
     data: res.data,
-    status: res.status
+    status: res.status,
   };
 }
 
@@ -28,7 +25,7 @@ export const getTask = async ({ id }:{ id: string }): Promise<ApiReturningDataT<
   const res = await tasksApi.get<ResponseTaskObjectT>(`${serverUrl.route}/${id}`);
   return {
     data: res.data,
-    status: res.status
+    status: res.status,
   };
 }
 
@@ -40,7 +37,7 @@ export const createTask = async ({ data } : {data: PartialRequestTaskObjectT}): 
 
   return {
     data: res.data,
-    status: res.status
+    status: res.status,
   };
 }
 
@@ -52,7 +49,7 @@ export const updateTask = async ({ id, data }: {id: string, data: PartialRequest
 
   return {
     data: res.data,
-    status: res.status
+    status: res.status,
   };
 }
 
@@ -63,6 +60,6 @@ export const deleteTask = async ({ id } : {id: string}): Promise<ApiReturningDat
 
   return {
     data: res.data,
-    status: res.status
+    status: res.status,
   };
 }

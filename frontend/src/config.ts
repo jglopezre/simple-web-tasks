@@ -1,4 +1,4 @@
-import { Config } from "./types";
+import { Config } from '@/types';
 
 const config: Config = {
   apiUrl: import.meta.env.VITE_API_URL,

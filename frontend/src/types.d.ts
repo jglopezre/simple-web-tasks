@@ -1,6 +1,7 @@
-import { ReactNode } from "react";
+import { AxiosError } from 'axios';
+import { ReactNode } from 'react';
 
-export type UrlAdresses = '/tasks';
+export type UrlAdresses = '/tasks' | '/test';
 
 export type ResponseTaskObjectT = {
   _id: string,
@@ -20,10 +21,23 @@ export type SimpleReactComponent = {
   children: ReactNode,
 };
 
+export type ErrorStateT = {
+  status: number,
+  isOpen: boolean
+  // error?: AxiosError | null,
+};
+
+export type ErrorStateReducerT = Partial<ErrorStateT>;
+
 export type ErrorActionsT = {
-  getIsError: () => boolean,
-  setError: () => void,
+  getErrorState: () => ErrorStateReducerT,
+  setError: (error: AxiosError) => void,
   unsetError: () => void,
+};
+
+export type ErrorStateReducerAction = {
+  type: 'ERROR_STATE-close-error' | 'ERROR_STATE-open-error',
+  payload?: ErrorStateReducerT,
 };
 
 export type AddTaskFormDisclosureT = {
@@ -43,3 +57,4 @@ export type ApiReturningDataT<T> = {
   status?: number,
   data?: T
 };
+
