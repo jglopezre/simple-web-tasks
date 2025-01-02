@@ -7,7 +7,7 @@ export class DbManager {
   private readonly connectOptions: ConnectOptions;
   private documentData: ReducedItask | null = null;
 
-  constructor(dbUrl?: string) {
+  constructor(dbUrl?: string, performConnection?: boolean) {
     if (!dbUrl) throw new Error ("DB_URL has not been defined on Environments Variables");
 
     this.uri = dbUrl;
@@ -18,6 +18,8 @@ export class DbManager {
         deprecationErrors: true,
       }
     }
+
+    if (performConnection) this.connect();
   }
 
   setDocument(document: ReducedItask) {
@@ -29,11 +31,24 @@ export class DbManager {
   }
 
   async connect() {
-    await mongoose.connect(this.uri, this.connectOptions);      
+    try {
+      console.log('Abriendo la conexión de MongoDB...');
+      await mongoose.connect(this.uri, this.connectOptions);      
+      console.log("La conexion a Mongo fue exitosa");
+
+    } catch (error: any) {
+      console.error("Conexion a Mongo no fue exitosa", error);
+    }
   }
 
   async disconnect() {
-    await mongoose.disconnect();
+    try {
+      console.log('Cerrando la conexión de MongoDB...');
+      await mongoose.disconnect();
+      console.log('La desconexion a Mongo fue exitosa');
+    } catch (error: any) {
+      throw new Error (`Conexion a Mongo no fue exitosa ${error}`);
+    }
   }
   
   async save() {
