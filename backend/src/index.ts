@@ -24,18 +24,20 @@ import swaggerDocument from './swagger.json';
   
   const port = process.env.PORT || 3000;
   
-  const dbManager = new DbManager(process.env.DB_URL);
-  dbManager.connect()
-  .then(() => console.log("Conexion a Mongo Atlas exitosa"))
-  .catch((error) => console.error("Conexion a Mongo no fue exitosa", error));
+  const dbManager = new DbManager(process.env.DB_URL, true);
 
   const taskModule = new TaskModule(dbManager);
   
   app.get('/', (_: Request, res: Response) => {
-    res.send('¡En root no tengo nada!');
+    res.send('<h1>Bienvenido a la API de Simple-Task-Manager</h1><p>Podes encontrar mas información <a href="https://github.com/jglopezre/simple-web-tasks" target="_blank">Acá</a></p>');
   });
   
   app.use('/api/tasks', taskModule.getController().getTaskRouter());
+
+  process.on('SIGINT', () => dbManager.disconnect()
+    .then(() => process.exit(0))
+    .catch(() => process.exit(-1)),
+  );
   
   app.listen(port, () => {
     console.log(`Servidor escuchando en puerto ${port}`);
