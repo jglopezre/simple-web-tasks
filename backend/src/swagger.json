@@ -60,7 +60,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "$ref": "#/components/responses/SuccessfullOperation",
             "description": "Tarea guardada con exito"
           },
@@ -106,7 +106,7 @@
           }
         },
         "responses": {
-          "200": {
+          "201": {
             "$ref": "#/components/responses/SuccessfullOperation",
             "description": "Tarea actualizada con exito"
           },
@@ -122,7 +122,7 @@
           { "$ref": "#/components/parameters/id"}
         ],
         "responses": {
-          "200": {
+          "201": {
             "$ref": "#/components/responses/SuccessfullOperation",
             "description": "Tarea eliminada con éxito"
           },

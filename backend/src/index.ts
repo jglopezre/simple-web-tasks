@@ -31,7 +31,7 @@ import swaggerDocument from './swagger.json';
   app.get('/', (_: Request, res: Response) => {
     res.send('<h1>Bienvenido a la API de Simple-Task-Manager</h1><p>Podes encontrar mas información <a href="https://github.com/jglopezre/simple-web-tasks" target="_blank">Acá</a></p>');
   });
-  
+
   app.use('/api/tasks', taskModule.getController().getTaskRouter());
 
   process.on('SIGINT', () => dbManager.disconnect()

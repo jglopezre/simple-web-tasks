@@ -1,9 +1,15 @@
 import express, { Request, Response, Router } from 'express';
-import TaskService from '@/tasksModule/task.service';
-import { ReducedItask } from '@/types';
-import { taskHasAtLeastOneField, taskIdValidation, taskPostValidations, taskRejectExtraFields, taskUpdateValidation } from './task.validators';
 import { validationResult } from 'express-validator';
-
+import TaskService from '@/tasksModule/task.service';
+import {
+  taskHasAtLeastOneField,
+  taskIdValidation,
+  taskPostValidations,
+  taskRejectExtraFields,
+  taskUpdateValidation
+} from './task.validators';
+import { HttpResponseStatusCode } from '../constants';
+import { PartialReducedItask, ReducedItask } from '@/types';
 
 class TaskController {
   private taskRouter: Router;
@@ -14,45 +20,24 @@ class TaskController {
     this.taskRouter = express.Router();
 
     this.taskRouter.get('/', async(_, res) => {
-      try {
-        const result = await this.taskService.findTasks();
-        res.status(200).json(result);
-
-      } catch (error: any) {
-        if (error.message === "No hay tareas registradas") {
-          res.status(404).json({ message: error.message });
-          return;
-        }
-        console.error('Error al consultar las tareas', error);
-        res.status(500).json({
-          message: 'Error Interno del servidor',
-        });
-      }
+      const {status, data} = await this.taskService.findTasks();
+      res.status(status).json(data);
     });
     
     this.taskRouter.get('/:id', taskIdValidation, async(req: Request, res: Response) => {
-      const id = req.params.id;
-      try {
-        const result = await this.taskService.findOneTask(id);
-        res.status(200).json(result);
+      const errors = validationResult(req);
 
-      } catch (error: any) {
-        if (error.message === 'La tarea no existe en la base de datos') {
-          res.status(404).json({ message: error.message });
-          return;
-        }
-        console.error(error);
-        res.status(500).json({
-          message: 'Error Interno',
-        });
+      if (!errors.isEmpty()) {
+        res.status(HttpResponseStatusCode.BAD_REQUEST).json({ errors: errors.array() });
+        return
       }
+
+      const id = req.params.id;
+      const {status, data} = await this.taskService.findOneTask(id);
+      res.status(status).json(data);
     });
     
-    this.taskRouter.post(
-      '/',
-      taskPostValidations.concat(taskRejectExtraFields), 
-      async(req: Request, res: Response
-    ) => {
+    this.taskRouter.post('/', taskPostValidations.concat(taskRejectExtraFields), async(req: Request, res: Response) => {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -60,27 +45,12 @@ class TaskController {
         return
       }
 
-      const data: ReducedItask = req.body;
-
-      try {
-        const result = await this.taskService.createTask(data);
-        res.status(200).json({
-          message: 'Tarea guardada con exito',
-          result,
-        });
-      } catch (error: any) {
-        console.error(error);
-        res.status(500).json({
-          message: 'Error Interno del servidor',
-        });
-      }
+      const reqData: ReducedItask = req.body;
+      const { status, data } = await this.taskService.createTask(reqData);
+      res.status(status).json(data);
     });
     
-    this.taskRouter.put(
-      '/:id',
-      taskUpdateValidation.concat(taskIdValidation, taskRejectExtraFields, taskHasAtLeastOneField),
-      async (req: Request, res: Response  
-    ) => {
+    this.taskRouter.put('/:id', taskUpdateValidation.concat(taskIdValidation, taskRejectExtraFields, taskHasAtLeastOneField), async (req: Request, res: Response) => {
       const errors = validationResult(req);
 
       if (!errors.isEmpty()) {
@@ -89,23 +59,9 @@ class TaskController {
       }
 
       const id = req.params.id;
-      const data: ReducedItask = req.body;
-      try {
-        const result = await this.taskService.updateTask(id, data);
-        res.status(200).json({
-          message: 'Tarea Actualizada con exito',
-          result,
-        });
-
-      } catch (error: any) {
-        if (error.message === 'La tarea no existe en la base de datos') {
-          res.status(404).json({ message: error.message });
-          return;
-        }
-        res.status(500).json({
-          message: 'Error Interno del servidor',
-        });
-      }
+      const reqData: PartialReducedItask = req.body;
+      const {status, data} = await this.taskService.updateTask(id, reqData);
+      res.status(status).json(data);
     });
     
     this.taskRouter.delete('/:id', taskIdValidation, async (req: Request, res: Response) => {
@@ -117,21 +73,8 @@ class TaskController {
       }
 
       const id = req.params.id;
-      try {
-        const result = await this.taskService.deleteTask(id);
-        res.status(201).json({
-          mesage: 'Tarea eliminada con exito',
-          result,
-        });
-      } catch (error: any) {
-        if (error.message === 'La tarea no existe en la base de datos') {
-          res.status(404).json({ message: error.message });
-          return;
-        }
-        res.status(500).json({
-          message: 'Error Interno del servidor',
-        });
-      }
+      const { status, data } = await this.taskService.deleteTask(id);
+      res.status(status).json(data);
     });
   }
 

@@ -1,5 +1,6 @@
 import { DbManager } from "@/dbManager";
 import { ReducedItask } from "@/types";
+import { HttpResponseStatusCode } from "../constants";
 
 class TaskService {
   constructor (private dbManager: DbManager) {};
@@ -10,10 +11,15 @@ class TaskService {
 
       if(tasks.length === 0) throw new Error("No hay tareas registradas");
 
-      return tasks;
+      return { status: HttpResponseStatusCode.OK, data: tasks };
 
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      if (error.message === "No hay tareas registradas") {
+        return { status: HttpResponseStatusCode.NOT_FOUND, data: { message: error.message }};
+      }
+      
+      console.error('Error al consultar las tareas', error);
+      return { status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR, data: { message: 'Error Interno del servidor' }};
     }
   };
   
@@ -23,10 +29,17 @@ class TaskService {
 
       if (!task) throw new Error ('La tarea no existe en la base de datos');
       
-      return task;
+      return {status: HttpResponseStatusCode.OK, data: task};
 
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      if (error.message === 'La tarea no existe en la base de datos') {
+        return{ status: HttpResponseStatusCode.BAD_REQUEST, data: { message: error.message }};
+      }
+      console.error(error);
+      return {
+        status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
+        data: { message: 'Error Interno del servidor', },
+      };
     }
   };
   
@@ -37,10 +50,20 @@ class TaskService {
 
       if (!task) throw new Error('La tarea no se pudo crear');
 
-      return task;
-
+      return {
+        status: HttpResponseStatusCode.CREATED,
+        data: {
+          message: 'Tarea guardada con exito',
+          task,
+        }
+      };
     } catch (error) {
-      throw error;
+      return {
+        status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
+        data: {
+          message: 'Error Interno del servidor',
+        }
+      };
     }
   };
   
@@ -50,10 +73,22 @@ class TaskService {
 
       if (!task) throw new Error('La tarea no existe en la base de datos'); 
       
-      return task;
+      return {
+        status: HttpResponseStatusCode.CREATED
+      };
 
-    } catch (error) {
-      throw error;
+    } catch (error: any) {
+      if (error.message === 'La tarea no existe en la base de datos') {
+        return {
+          status: HttpResponseStatusCode.NOT_FOUND,
+          data: { message: error.message },
+        };
+      }
+
+      return {
+        status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
+        data: { message: 'Error Interno del servidor' },
+      };
     }
   };
   
@@ -61,13 +96,28 @@ class TaskService {
     try {
       const task = await this.dbManager.updateRegister(id, data);
 
-      if (!task) throw new Error('La tarea no existe en la base de datos')
-      return task;
+      if (!task) throw new Error('La tarea no existe en la base de datos');
+      
+      return {
+        status: HttpResponseStatusCode.CREATED,
+        data: {
+          message: 'Tarea Actualizada con exito',
+          task,
+        }
+      };
+    } catch (error: any) {
+      if (error.message === 'La tarea no existe en la base de datos') {
+        return {
+          status: HttpResponseStatusCode.NOT_FOUND,
+          data: { message: error.message }
+        };
+      }
 
-    } catch (error) {
-      throw error;
+      return {
+        status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
+        data: { message: 'Error Interno del servidor' }
+      };
     }
-
   };
 }
 
