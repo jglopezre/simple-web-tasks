@@ -1,5 +1,5 @@
 import mongoose, { ConnectOptions } from "mongoose";
-import { ITask, ReducedItask } from "./types";
+import { ITaskDocument, PartialReducedItask, ReducedItask, TaskDataForResponseT } from "./types";
 import TaskModel from "./tasksModule/task.model";
 
 export class DbManager {
@@ -58,23 +58,45 @@ export class DbManager {
     return taskSaved;
   }
 
-  async getCollection() {
+  async getCollection(): Promise<TaskDataForResponseT[]> {
     const documents = await TaskModel.find({});
-    return documents;
+
+    const dataToSend = documents.map(this.buildDataToSend);
+    return dataToSend;
   }
 
-  async getOneRegister(id: string) {
+  async getOneRegister(id: string): Promise<TaskDataForResponseT | null> {
     const document = await TaskModel.findById(id);
-    return document;
+    
+    if (!document) return null;
+
+    return this.buildDataToSend(document);
   }
 
-  async deleteRegister(id: string) {
+  async deleteRegister(id: string): Promise<TaskDataForResponseT | null> {
     const document = await TaskModel.findByIdAndDelete(id);
-    return document;
+    
+    if (!document) return null;
+
+    return this.buildDataToSend(document);
   }
 
-  async updateRegister(id: string, data: ITask) {
+  async updateRegister(id: string, data: PartialReducedItask): Promise<TaskDataForResponseT | null> {
     const document = await TaskModel.findByIdAndUpdate(id, data);
-    return document;
+    if (!document) return null;
+
+    return this.buildDataToSend(document);
+  }
+
+  private buildDataToSend(document: ITaskDocument): TaskDataForResponseT {
+    const dataToSend: TaskDataForResponseT = {
+      _id: document?._id ?? '',
+      title: document?.title ?? '',
+      description: document?.description ?? '',
+      completed: document?.completed ?? false,
+      creationDate: document?.creationDate ?? '',      
+    };
+    
+    return dataToSend;
   }
 }

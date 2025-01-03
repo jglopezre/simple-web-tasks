@@ -27,7 +27,7 @@ function App() {
           direction={{ base: 'column', md: 'row'}}
           gap="4"
         >
-          <For each={sortData(responseData?.data)}>
+          <For each={sortData(responseData?.data?.data)}>
             {(item) => (
               <Skeleton loading={isLoading || isError}
                 flex="1 1 calc(35% - 16px)"

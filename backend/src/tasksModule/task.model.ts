@@ -1,5 +1,5 @@
 import mongoose, { Schema } from "mongoose";
-import { ITask } from "@/types";
+import { ITaskDocument } from "@/types";
 
 const TaskSchema: Schema = new Schema({
     title: { type: String, required: true},
@@ -8,6 +8,6 @@ const TaskSchema: Schema = new Schema({
     creationDate: { type: Date, default: Date.now }
 });
 
-const TaskModel = mongoose.model<ITask>('task', TaskSchema);
+const TaskModel = mongoose.model<ITaskDocument>('task', TaskSchema);
 
 export default TaskModel;

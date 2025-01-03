@@ -4,6 +4,7 @@ import {
   ApiReturningDataT,
   PartialRequestTaskObjectT,
   ResponseTaskObjectT,
+  TaskObjectT,
   TasksCollectionT
 } from '@/types';
 
@@ -13,24 +14,24 @@ const tasksApi = axios.create({
   baseURL: serverUrl.fetchingUrl,
 });
 
-export const getTasks = async () => {
-  const res = await tasksApi.get<TasksCollectionT>(serverUrl.route);
+export const getTasks = async (): Promise<ApiReturningDataT<ResponseTaskObjectT<TasksCollectionT>>> => {
+  const res = await tasksApi.get<ResponseTaskObjectT<TasksCollectionT>>(serverUrl.route);
   return {
     data: res.data,
     status: res.status,
   };
 }
 
-export const getTask = async ({ id }:{ id: string }): Promise<ApiReturningDataT<ResponseTaskObjectT>> => {
-  const res = await tasksApi.get<ResponseTaskObjectT>(`${serverUrl.route}/${id}`);
+export const getTask = async ({ id }:{ id: string }): Promise<ApiReturningDataT<ResponseTaskObjectT<TaskObjectT>>> => {
+  const res = await tasksApi.get<ResponseTaskObjectT<TaskObjectT>>(`${serverUrl.route}/${id}`);
   return {
-    data: res.data,
     status: res.status,
+    data: res.data,
   };
 }
 
-export const createTask = async ({ data } : {data: PartialRequestTaskObjectT}): Promise<ApiReturningDataT<ResponseTaskObjectT>> => {
-  const res = await tasksApi.post<PartialRequestTaskObjectT, AxiosResponse<ResponseTaskObjectT>>(
+export const createTask = async ({ data } : {data: PartialRequestTaskObjectT}): Promise<ApiReturningDataT<ResponseTaskObjectT<TaskObjectT>>> => {
+  const res = await tasksApi.post<PartialRequestTaskObjectT, AxiosResponse<ResponseTaskObjectT<TaskObjectT>>>(
     serverUrl.route,
     data,
   );
@@ -41,8 +42,8 @@ export const createTask = async ({ data } : {data: PartialRequestTaskObjectT}): 
   };
 }
 
-export const updateTask = async ({ id, data }: {id: string, data: PartialRequestTaskObjectT}): Promise<ApiReturningDataT<ResponseTaskObjectT>> => {
-  const res = await tasksApi.put<PartialRequestTaskObjectT, AxiosResponse<ResponseTaskObjectT>>(
+export const updateTask = async ({ id, data }: {id: string, data: PartialRequestTaskObjectT}): Promise<ApiReturningDataT<ResponseTaskObjectT<TaskObjectT>>> => {
+  const res = await tasksApi.put<PartialRequestTaskObjectT, AxiosResponse<ResponseTaskObjectT<TaskObjectT>>>(
     `${serverUrl.route}/${id}`,
     data,
   );
@@ -53,8 +54,8 @@ export const updateTask = async ({ id, data }: {id: string, data: PartialRequest
   };
 }
 
-export const deleteTask = async ({ id } : {id: string}): Promise<ApiReturningDataT<ResponseTaskObjectT>> => {
-  const res = await tasksApi.delete<string, AxiosResponse<ResponseTaskObjectT>>(
+export const deleteTask = async ({ id } : {id: string}): Promise<ApiReturningDataT<TaskObjectT>> => {
+  const res = await tasksApi.delete<string, AxiosResponse<TaskObjectT>>(
     `${serverUrl.route}/${id}`,
   );
 

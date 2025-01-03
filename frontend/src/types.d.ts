@@ -3,19 +3,24 @@ import { ReactNode } from 'react';
 
 export type UrlAdresses = '/tasks' | '/test';
 
-export type ResponseTaskObjectT = {
+export type ResponseTaskObjectT<T> = {
+  message: string
+  data: T
+};
+
+export type TaskObjectT = {
   _id: string,
   title: string,
   description: string,
   completed: boolean,
   creationDate: string,
-};
+}
 
 export type RequestTaskObjectT = Omit<ResponseTaskObjectT, '_id' | 'creationDate'>;
 
 export type PartialRequestTaskObjectT = Partial<RequestTaskObjectT>;
 
-export type TasksCollectionT = ResponseTaskObjectT[];
+export type TasksCollectionT = TaskObjectT[];
 
 export type SimpleReactComponent = {
   children: ReactNode,

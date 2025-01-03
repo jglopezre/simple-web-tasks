@@ -20,8 +20,8 @@ class TaskController {
     this.taskRouter = express.Router();
 
     this.taskRouter.get('/', async(_, res) => {
-      const {status, data} = await this.taskService.findTasks();
-      res.status(status).json(data);
+      const responseData = await this.taskService.findTasks();
+      res.status(responseData.status).json(responseData?.result);
     });
     
     this.taskRouter.get('/:id', taskIdValidation, async(req: Request, res: Response) => {
@@ -33,8 +33,8 @@ class TaskController {
       }
 
       const id = req.params.id;
-      const {status, data} = await this.taskService.findOneTask(id);
-      res.status(status).json(data);
+      const responseData = await this.taskService.findOneTask(id);
+      res.status(responseData.status).json(responseData?.result);
     });
     
     this.taskRouter.post('/', taskPostValidations.concat(taskRejectExtraFields), async(req: Request, res: Response) => {
@@ -46,8 +46,8 @@ class TaskController {
       }
 
       const reqData: ReducedItask = req.body;
-      const { status, data } = await this.taskService.createTask(reqData);
-      res.status(status).json(data);
+      const responseData = await this.taskService.createTask(reqData);
+      res.status(responseData.status).json(responseData?.result);
     });
     
     this.taskRouter.put('/:id', taskUpdateValidation.concat(taskIdValidation, taskRejectExtraFields, taskHasAtLeastOneField), async (req: Request, res: Response) => {
@@ -60,8 +60,8 @@ class TaskController {
 
       const id = req.params.id;
       const reqData: PartialReducedItask = req.body;
-      const {status, data} = await this.taskService.updateTask(id, reqData);
-      res.status(status).json(data);
+      const responseData = await this.taskService.updateTask(id, reqData);
+      res.status(responseData.status).json(responseData?.result);
     });
     
     this.taskRouter.delete('/:id', taskIdValidation, async (req: Request, res: Response) => {
@@ -73,8 +73,8 @@ class TaskController {
       }
 
       const id = req.params.id;
-      const { status, data } = await this.taskService.deleteTask(id);
-      res.status(status).json(data);
+      const responseData = await this.taskService.deleteTask(id);
+      res.status(responseData.status).json(responseData?.result);
     });
   }
 
