@@ -1,6 +1,7 @@
 import { DbManager } from "@/dbManager";
-import { ApiResponseDataT, ReducedItask, TaskDataForResponseT } from "@/types";
+import { ApiResponseDataT, PartialReducedItask, ReducedItask, TaskDataForResponseT } from "@/types";
 import { HttpResponseStatusCode } from "../constants";
+import { taskApiResponseMessages } from "./taskApiResponseMessages";
 
 class TaskService {
   constructor (private dbManager: DbManager) {};
@@ -9,26 +10,24 @@ class TaskService {
     try {
       const tasks = await this.dbManager.getCollection();
 
-      if(tasks.length === 0) throw new Error("No hay tareas registradas");
+      if(tasks.length === 0) {
+        return {
+          status: HttpResponseStatusCode.NOT_FOUND,
+          result: { message: taskApiResponseMessages.notFoundCollection },
+        };
+      };
+
       return {
         status: HttpResponseStatusCode.OK,
         result: {
-          message: 'Tareas devueltas con exito',
+          message: taskApiResponseMessages.foundCollection,
           data: tasks,
         }
       };
     } catch (error: any) {
-      if (error.message === "No hay tareas registradas") {
-        return {
-          status: HttpResponseStatusCode.NOT_FOUND,
-          result: { message: error.message },
-        };
-      }
-      
-      console.error('Error al consultar las tareas', error);
       return {
         status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
-        result: { message: 'Error Interno del servidor' },
+        result: { message: taskApiResponseMessages.internalError },
       };
     }
   };
@@ -37,28 +36,26 @@ class TaskService {
     try {
       const task = await this.dbManager.getOneRegister(id);
 
-      if (!task) throw new Error ('La tarea no existe en la base de datos');
+      if (!task) {
+        return {
+          status: HttpResponseStatusCode.NOT_FOUND,
+          result: {
+            message: taskApiResponseMessages.notFound
+          }
+        }
+      };
       
       return {
         status: HttpResponseStatusCode.OK,
         result: {
-          message: 'Tarea encontrada con éxito',
+          message: taskApiResponseMessages.found,
           data: task
         }
       };
     } catch (error: any) {
-      if (error.message === 'La tarea no existe en la base de datos') {
-        return{
-          status: HttpResponseStatusCode.BAD_REQUEST,
-          result: {
-            message: error.message
-          }
-        };
-      }
-      console.error(error);
       return {
         status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
-        result: { message: 'Error Interno del servidor', },
+        result: { message: taskApiResponseMessages.internalError },
       };
     }
   };
@@ -66,14 +63,13 @@ class TaskService {
   async createTask(data: ReducedItask): Promise<ApiResponseDataT<TaskDataForResponseT>> {
     try {
       this.dbManager.setDocument(data);
-      const task = await this.dbManager.save()
 
-      if (!task) throw new Error('La tarea no se pudo crear');
+      const task = await this.dbManager.saveRegister()
 
       return {
         status: HttpResponseStatusCode.CREATED,
         result: {
-          message: 'Tarea guardada con exito',
+          message: taskApiResponseMessages.created,
           data: task,
         }
       };
@@ -81,7 +77,7 @@ class TaskService {
       return {
         status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
         result: {
-          message: 'Error Interno del servidor',
+          message: taskApiResponseMessages.internalError,
         }
       };
     }
@@ -91,54 +87,50 @@ class TaskService {
     try {
       const task = await this.dbManager.deleteRegister(id);
 
-      if (!task) throw new Error('La tarea no existe en la base de datos'); 
+      if (!task) {
+        return {
+          status: HttpResponseStatusCode.NOT_FOUND,
+          result: { message: taskApiResponseMessages.notFound },
+        };
+      }; 
       
       return {
         status: HttpResponseStatusCode.CREATED,
         result: {
-          message: 'Registro eliminado con exito',
+          message: taskApiResponseMessages.deleted,
           data: task,
         }
       };
     } catch (error: any) {
-      if (error.message === 'La tarea no existe en la base de datos') {
-        return {
-          status: HttpResponseStatusCode.NOT_FOUND,
-          result: { message: error.message },
-        };
-      }
-
       return {
         status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
-        result: { message: 'Error Interno del servidor' },
+        result: { message: taskApiResponseMessages.internalError },
       };
     }
   };
   
-  async updateTask (id: string, data: any): Promise<ApiResponseDataT<TaskDataForResponseT>> {
+  async updateTask (id: string, data: PartialReducedItask): Promise<ApiResponseDataT<TaskDataForResponseT>> {
     try {
       const task = await this.dbManager.updateRegister(id, data);
 
-      if (!task) throw new Error('La tarea no existe en la base de datos');
+      if (!task) {
+        return {
+          status: HttpResponseStatusCode.NOT_FOUND,
+          result: { message: taskApiResponseMessages.notFound}
+        };
+      };
       
       return {
         status: HttpResponseStatusCode.CREATED,
         result: {
-          message: 'Tarea Actualizada con exito',
+          message: taskApiResponseMessages.updated,
           data: task,
         }
       };
     } catch (error: any) {
-      if (error.message === 'La tarea no existe en la base de datos') {
-        return {
-          status: HttpResponseStatusCode.NOT_FOUND,
-          result: { message: error.message }
-        };
-      }
-
       return {
         status: HttpResponseStatusCode.INTERNAL_SERVER_ERROR,
-        result: { message: 'Error Interno del servidor' }
+        result: { message: taskApiResponseMessages.internalError }
       };
     }
   };

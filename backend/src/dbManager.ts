@@ -51,11 +51,13 @@ export class DbManager {
     }
   }
   
-  async save() {
+  async saveRegister(): Promise<TaskDataForResponseT> {
     if (!this.documentData) throw new Error("DocumentData debe estar seteada antes de salvar");
     const taskToSave = new TaskModel(this.documentData);
     const taskSaved = await taskToSave.save();
-    return taskSaved;
+
+    const dataToSend = this.buildDataToSend(taskSaved);
+    return dataToSend;
   }
 
   async getCollection(): Promise<TaskDataForResponseT[]> {
